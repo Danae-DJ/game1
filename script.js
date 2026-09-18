@@ -91,7 +91,7 @@ class Projectile{
         this.position.y += this.velocity;
     }
     collisions(object){
-        if(this.position.y <= 0) {
+        if(this.position.y <= 0 || this.position.y>=canvas.height) {
             return 1;
         }
         if(this.position.x < object.position.x + object.size.width &&
@@ -152,7 +152,7 @@ class Player{
     //method to listen the keyboard events
     keyboard(){
         document.addEventListener("keydown", (evt)=> {
-            console.log("key pressed: "+ evt.key);
+            //console.log("key pressed: "+ evt.key);
                 if(evt.key=="a"||evt.key=="A"){
                     this.keys.left = true;
                 }
@@ -210,6 +210,27 @@ function initEnemys(){
         createEnemys(colors[i]);
     }
 }
+//function to particles of explote
+function createExplosion(object){
+    for(let k = 0; k<8; k++){
+        let particle = new Particle(
+            Math.floor(Math.random()*16)+15,
+            {
+                x:object.position.x + object.size.width/2,
+                y:object.position.y + object.size.height/2
+            },
+            object.color,
+            {
+                x: (Math.random()*1.6 - 0.8)*6,
+                y: (Math.random()*1.6 - 0.8)*6
+            }
+        );
+        particle.position.x -= particle.side/2;
+        particle.position.y -= particle.side/2;
+        particles.push(particle);
+    }
+}
+
 //method to update the projectiles of the player
 function updateObjects(){
     for(let i = 0; i < player.projectiles.length; i++){
@@ -221,21 +242,7 @@ function updateObjects(){
                 break;
             }
             if(player.projectiles[i].collisions(enemys[j])==2){
-                for(let k = 0; k<8; k++){
-                    let particle = new Particle(
-                        Math.floor(Math.random()*16)+15,
-                        {
-                            x:enemys[j].position.x + enemys[j].size.width/2,
-                            y:enemys[j].position.y + enemys[j].size.height/2
-                        },
-                        enemys[j].color,
-                        {
-                            x: (Math.random()*1.6 - 0.8)*6,
-                            y: (Math.random()*1.6 - 0.8)*6
-                        }
-                    );
-                    particles.push(particle);
-                }
+                createExplosion(enemys[j]);
                 let colorEnemy = enemys[j].color;
                 setTimeout(()=>{
                     createEnemys(colorEnemy);
@@ -256,11 +263,23 @@ function updateObjects(){
         p.update();
         if(p.side <= 0){
             particles.splice(i,1);
-            console.log("Particle disappeared");
+            //console.log("Particle disappeared");
         }
     });
     for(let i = 0; i<projectilesEnemys.length; i++){
         projectilesEnemys[i].update();
+        if(projectilesEnemys[i].collisions(player)==1){
+            projectilesEnemys.splice(i,1);
+        }
+        else if(projectilesEnemys[i].collisions(player)==2){
+            projectilesEnemys.splice(i,1);
+            
+            createExplosion(player);
+
+            player.position.x = -50;
+            player.position.y = -50;
+            console.log("collision with player")
+        }
     }
 }
 
