@@ -12,3 +12,5 @@ How to create this game:
 1. create the base of the game, the space where the player'll play the space ship
 2. create the space ship, this object working with `cavas`; where we need create the mothod and bucle to move the space ship only in the base of game.
 3. create the projectiles of our space ship.
+4. create the enemies, determinite what happend when our projectil toches someone enemy; the projectil dissapeares and the enemy explodes (creat the efect of particules to delete the enemy and the particles too).
+5. create the porjectiles of enemies.

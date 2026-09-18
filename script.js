@@ -35,6 +35,27 @@ class Enemy{
         this.size = size;
         this.color = color;
         this.velocity = velocity;
+        this.frame = 0;
+        this.maxFrame = Math.floor(Math.random()*41)+60 //Number of frames to shoot a projectile
+    }
+    shoot(projectiles){
+        if(this.frame > this.maxFrame){
+            let projectile = new Projectile(
+                {
+                    x:(this.position.x + this.size.width/2)-5,
+                    y:this.position.y
+                },
+                {
+                    width:10,
+                    height:20
+                },
+                this.color,
+                8
+
+            );
+            projectiles.push(projectile);
+            this.frame = 0;
+        }
     }
     update(){
         this.draw();
@@ -47,6 +68,7 @@ class Enemy{
             this.position.x = 0;
             this.velocity *= -1;
         }
+        this.frame++;
     }
     draw(){
         ctx.beginPath();
@@ -168,6 +190,7 @@ const player = new Player({x:200, y:480}, {width:60, height:20}, "white", 7);
 //Array of enemies ---> aleatory number formule x:Math.floor(Math.random() * (max - min + 1)) + min
 const enemys = [];
 const particles = [];
+const projectilesEnemys = [];
 
 function createEnemys(color){
     let enemy = new Enemy(
@@ -213,7 +236,11 @@ function updateObjects(){
                     );
                     particles.push(particle);
                 }
-                
+                let colorEnemy = enemys[j].color;
+                setTimeout(()=>{
+                    createEnemys(colorEnemy);
+                },2000);//seconds to create new enemy
+
                 player.projectiles.splice(i,1);
                 enemys.splice(j,1);
                 console.log("Enemy destroyed");
@@ -223,6 +250,7 @@ function updateObjects(){
     }
     enemys.forEach((p) => {
         p.update();
+        p.shoot(projectilesEnemys);
     });
     particles.forEach((p,i) => {
         p.update();
@@ -231,6 +259,9 @@ function updateObjects(){
             console.log("Particle disappeared");
         }
     });
+    for(let i = 0; i<projectilesEnemys.length; i++){
+        projectilesEnemys[i].update();
+    }
 }
 
 //bucle about the player's movement
