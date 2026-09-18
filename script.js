@@ -3,6 +3,30 @@ const ctx = canvas.getContext("2d");
 //base of game
 canvas.width = 900;
 canvas.height = 500;
+console.log("Destroyer all enemies");
+
+//efect to explode the enemy
+class Particle{
+    constructor(side, position, color, velocity){
+        this.side = side;
+        this.position = position;
+        this.color = color;
+        this.velocity = velocity;
+    }
+    update(){
+        this.draw();
+        this.position.x += this.velocity.x;
+        this.position.y += this.velocity.y;
+        this.side -= 0.8;
+    }
+    draw(){
+        ctx.beginPath();
+        ctx.fillStyle = this.color;
+        ctx.fillRect(this.position.x, this.position.y, 
+            this.side, this.side);
+        ctx.closePath();
+    }
+}
 
 //enemies of the player
 class Enemy{
@@ -46,16 +70,16 @@ class Projectile{
     }
     collisions(object){
         if(this.position.y <= 0) {
-            return true;
+            return 1;
         }
         if(this.position.x < object.position.x + object.size.width &&
             this.position.x + this.size.width > object.position.x &&
             this.position.y < object.position.y + object.size.height &&
             this.position.y + this.size.height > object.position.y
             ){
-                return true;
+                return 2;
         }
-        return false;
+        
     }
     draw(){
         ctx.beginPath();
@@ -143,6 +167,7 @@ const player = new Player({x:200, y:480}, {width:60, height:20}, "white", 7);
 
 //Array of enemies ---> aleatory number formule x:Math.floor(Math.random() * (max - min + 1)) + min
 const enemys = [];
+const particles = [];
 
 function createEnemys(color){
     let enemy = new Enemy(
@@ -168,14 +193,43 @@ function updateObjects(){
         player.projectiles[i].update();
         //if(player.projectiles[i].collisions(enemy)){player.projectiles.splice(i,1);}
         for(let j=0; j<enemys.length; j++){
-            if(player.projectiles[i].collisions(enemys[j])){
+            if(player.projectiles[i].collisions(enemys[j])==1){
                 player.projectiles.splice(i,1);
+                break;
+            }
+            if(player.projectiles[i].collisions(enemys[j])==2){
+                for(let k = 0; k<8; k++){
+                    let particle = new Particle(
+                        Math.floor(Math.random()*16)+15,
+                        {
+                            x:enemys[j].position.x + enemys[j].size.width/2,
+                            y:enemys[j].position.y + enemys[j].size.height/2
+                        },
+                        enemys[j].color,
+                        {
+                            x: (Math.random()*1.6 - 0.8)*6,
+                            y: (Math.random()*1.6 - 0.8)*6
+                        }
+                    );
+                    particles.push(particle);
+                }
+                
+                player.projectiles.splice(i,1);
+                enemys.splice(j,1);
+                console.log("Enemy destroyed");
                 break;
             }
         }
     }
-     enemys.forEach((p) => {
+    enemys.forEach((p) => {
         p.update();
+    });
+    particles.forEach((p,i) => {
+        p.update();
+        if(p.side <= 0){
+            particles.splice(i,1);
+            console.log("Particle disappeared");
+        }
     });
 }
 
