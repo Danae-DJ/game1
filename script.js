@@ -1,5 +1,11 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
+const menu = document.querySelector(".menu");
+const button = document.querySelector(".button");
+const scoreSpan = document.querySelector(".score");
+let animationId;
+let score = 0;
+
 //base of game
 canvas.width = 900;
 canvas.height = 500;
@@ -230,6 +236,27 @@ function createExplosion(object){
         particles.push(particle);
     }
 }
+//Create the GameOver to the game
+function gameOver(){
+    ctx.fillStyle = "#141414";
+    ctx.fillRect(0,0, canvas.width, canvas.height);
+    enemys.length = 0;
+    projectilesEnemys.length = 0;
+    particles.length = 0;
+    player.projectiles.length = 0;
+    menu.style.display = "flex"
+}
+//active the button to play again
+button.addEventListener("click",()=>{
+    score = 0;
+    scoreSpan.innerHTML = score;
+
+    menu.style.display = "none";
+    player.position = {x:200, y:480};
+    initEnemys();
+    update();
+    console.log("Destroyer all enemies");
+});
 
 //method to update the projectiles of the player
 function updateObjects(){
@@ -250,6 +277,8 @@ function updateObjects(){
 
                 player.projectiles.splice(i,1);
                 enemys.splice(j,1);
+                score++;
+                scoreSpan.innerHTML = score;
                 console.log("Enemy destroyed");
                 break;
             }
@@ -278,14 +307,20 @@ function updateObjects(){
 
             player.position.x = -50;
             player.position.y = -50;
-            console.log("collision with player")
+            console.log("collision with player");
+            setTimeout(()=>{
+                cancelAnimationFrame(animationId);
+                gameOver();
+                console.log("Game Over");
+            }, 2000);
+            
         }
     }
 }
 
 //bucle about the player's movement
 function update(){
-    requestAnimationFrame(update);
+    animationId = requestAnimationFrame(update);
     ctx.fillStyle = "#141414";
     ctx.fillRect(0,0, canvas.width, canvas.height);
 

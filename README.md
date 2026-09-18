@@ -14,3 +14,5 @@ How to create this game:
 3. create the projectiles of our space ship.
 4. create the enemies, determinite what happend when our projectil toches someone enemy; the projectil dissapeares and the enemy explodes (creat the efect of particules to delete the enemy and the particles too).
 5. create the porjectiles of enemies.
+6. create the posibilite of enemies destroyed the player.
+7. create menu.
