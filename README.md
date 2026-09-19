@@ -16,3 +16,6 @@ How to create this game:
 5. create the porjectiles of enemies.
 6. create the posibilite of enemies destroyed the player.
 7. create menu.
+
+Tutorial and original credits for:
+https://youtu.be/Oat0bMq5NGc?si=uRFW7vtpkcW5ssNs

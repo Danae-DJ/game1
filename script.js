@@ -247,7 +247,28 @@ function gameOver(){
     menu.style.display = "flex"
 }
 //active the button to play again
-button.addEventListener("click",()=>{
+//second option click and enter keydown
+function startGame() {
+    score = 0;
+    scoreSpan.innerHTML = score;
+
+    menu.style.display = "none";
+    player.position = {x: 200, y: 480};
+    initEnemys();
+    update();
+
+    console.log("Destroyer all enemies");
+}
+
+button.addEventListener("click", startGame);
+
+document.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+        startGame();
+    }
+});
+//fisrt option to button with click
+/*button.addEventListener("click",()=>{
     score = 0;
     scoreSpan.innerHTML = score;
 
@@ -256,7 +277,7 @@ button.addEventListener("click",()=>{
     initEnemys();
     update();
     console.log("Destroyer all enemies");
-});
+});*/
 
 //method to update the projectiles of the player
 function updateObjects(){
